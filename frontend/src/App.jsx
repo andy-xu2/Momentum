@@ -9,9 +9,12 @@ import { api } from './api.js'
 import {
   CATEGORY_COLORS,
   categoryForItem,
+  clearScheduleState,
   loadAuth,
+  loadScheduleState,
   loadStreaks,
   saveAuth,
+  saveScheduleState,
   saveStreaks,
   streakGoal,
   todayIso,
@@ -26,14 +29,15 @@ const NAV_ITEMS = [
 
 export default function App() {
   const [user, setUser] = useState(() => loadAuth())
-  const [screen, setScreen] = useState('input')
-  const [wakeTime, setWakeTime] = useState('07:30')
-  const [sleepTime, setSleepTime] = useState('23:30')
-  const [fixedEvents, setFixedEvents] = useState([])
-  const [flexTasks, setFlexTasks] = useState([])
-  const [scheduleOptions, setScheduleOptions] = useState([])
-  const [activeSchedule, setActiveSchedule] = useState(null)
-  const [scheduleAnchor, setScheduleAnchor] = useState(null)
+  const _saved = loadScheduleState()
+  const [screen, setScreen] = useState(() => (_saved?.activeSchedule ? 'dashboard' : _saved?.scheduleOptions?.length ? 'selection' : 'input'))
+  const [wakeTime, setWakeTime] = useState(() => _saved?.wakeTime ?? '07:30')
+  const [sleepTime, setSleepTime] = useState(() => _saved?.sleepTime ?? '23:30')
+  const [fixedEvents, setFixedEvents] = useState(() => _saved?.fixedEvents ?? [])
+  const [flexTasks, setFlexTasks] = useState(() => _saved?.flexTasks ?? [])
+  const [scheduleOptions, setScheduleOptions] = useState(() => _saved?.scheduleOptions ?? [])
+  const [activeSchedule, setActiveSchedule] = useState(() => _saved?.activeSchedule ?? null)
+  const [scheduleAnchor, setScheduleAnchor] = useState(() => _saved?.scheduleAnchor ?? null)
   const [toast, setToast] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -42,6 +46,10 @@ export default function App() {
   useEffect(() => {
     saveStreaks(streaks)
   }, [streaks])
+
+  useEffect(() => {
+    saveScheduleState({ wakeTime, sleepTime, fixedEvents, flexTasks, scheduleOptions, activeSchedule, scheduleAnchor })
+  }, [wakeTime, sleepTime, fixedEvents, flexTasks, scheduleOptions, activeSchedule, scheduleAnchor])
 
   function showToast(message) {
     setToast({ id: crypto.randomUUID(), message })
@@ -56,7 +64,16 @@ export default function App() {
 
   function handleLogout() {
     saveAuth(null)
+    clearScheduleState()
     setUser(null)
+    setScreen('input')
+    setFixedEvents([])
+    setFlexTasks([])
+    setScheduleOptions([])
+    setActiveSchedule(null)
+    setScheduleAnchor(null)
+    setWakeTime('07:30')
+    setSleepTime('23:30')
   }
 
   async function handleBuildWeek() {

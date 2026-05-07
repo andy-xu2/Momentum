@@ -207,6 +207,34 @@ export function saveAuth(user) {
   }
 }
 
+const SCHEDULE_KEY = 'momentum.schedule'
+
+export function loadScheduleState() {
+  try {
+    const raw = localStorage.getItem(SCHEDULE_KEY)
+    if (!raw) return null
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
+}
+
+export function saveScheduleState(state) {
+  try {
+    localStorage.setItem(SCHEDULE_KEY, JSON.stringify(state))
+  } catch {
+    // ignore quota errors
+  }
+}
+
+export function clearScheduleState() {
+  try {
+    localStorage.removeItem(SCHEDULE_KEY)
+  } catch {
+    // ignore
+  }
+}
+
 // Build a 6×7 month grid keyed by ISO dates so the mini-calendar can
 // render past, current, and next month cells in one pass.
 export function monthGrid(year, monthIndex) {
