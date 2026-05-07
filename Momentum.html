@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Momentum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg: #fbfaf7;
+    --ink: #1a1a1f;
+    --ink-2: #4a4a55;
+    --ink-3: #8a8a96;
+    --line: #ececec;
+    --line-2: #f3f3f1;
+    --card: #ffffff;
+    --accent-a: #b58cff;
+    --accent-b: #ff8fb3;
+    --accent-c: #ffb98a;
+    --grad: linear-gradient(135deg, var(--accent-a) 0%, var(--accent-b) 55%, var(--accent-c) 100%);
+
+    /* density */
+    --row-h: 92px;
+    --pad: 14px;
+
+    /* category pastels */
+    --cat-class: #e7e0ff;
+    --cat-class-bar: #8a6df0;
+    --cat-class-ink: #4731a8;
+    --cat-study: #ffe4d6;
+    --cat-study-bar: #e87a3c;
+    --cat-study-ink: #8a3f10;
+    --cat-health: #d8efe2;
+    --cat-health-bar: #3a9c6b;
+    --cat-health-ink: #16573a;
+    --cat-social: #ffe2ee;
+    --cat-social-bar: #d65a8e;
+    --cat-social-ink: #7a1f48;
+    --cat-rest: #e6e9f5;
+    --cat-rest-bar: #6a78b8;
+    --cat-rest-ink: #2c3766;
+    --cat-personal: #fff3c4;
+    --cat-personal-bar: #c79b1e;
+    --cat-personal-ink: #6e530a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  button{font-family:inherit}
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-thumb{background:#dcdcd8;border-radius:8px}
+  ::-webkit-scrollbar-track{background:transparent}
+  #root{min-height:100vh}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="momentum-data.jsx"></script>
+<script type="text/babel" src="momentum-sidebar.jsx"></script>
+<script type="text/babel" src="momentum-month.jsx"></script>
+<script type="text/babel" src="momentum-day.jsx"></script>
+<script type="text/babel" src="momentum-login.jsx"></script>
+<script type="text/babel" src="momentum-app.jsx"></script>
+</body>
+</html>
