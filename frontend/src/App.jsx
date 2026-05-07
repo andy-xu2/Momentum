@@ -22,12 +22,14 @@ import {
   weekMondayIso,
 } from './constants.js'
 
+// Navigation items for the app header
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'selection', label: 'Schedules' },
   { id: 'input', label: 'Add Tasks' },
 ]
 
+// Main App component
 export default function App() {
   const [user, setUser] = useState(() => loadAuth())
   const initialInputs = useMemo(() => loadInputs(), [])
@@ -65,11 +67,13 @@ export default function App() {
     saveSession({ scheduleOptions, activeSchedule, scheduleAnchor })
   }, [scheduleOptions, activeSchedule, scheduleAnchor])
 
+  // Show a temporary toast notification
   function showToast(message) {
     setToast({ id: crypto.randomUUID(), message })
     setTimeout(() => setToast(null), 4000)
   }
 
+  // Handle user login and set initial screen
   function handleLogin(profile) {
     setUser(profile)
     saveAuth(profile)
@@ -81,6 +85,7 @@ export default function App() {
     setUser(null)
   }
 
+  // Build weekly schedule using API
   async function handleBuildWeek() {
     if (flexTasks.length === 0) {
       showToast('Add at least one task to build your week.')
@@ -187,10 +192,12 @@ export default function App() {
     [activeSchedule, scheduleOptions.length],
   )
 
+  // Render login page if not authenticated
   if (!user) {
     return <LoginPage onLogin={handleLogin} />
   }
 
+  // Main app UI
   return (
     <div className="app">
       <header className="app-header">
