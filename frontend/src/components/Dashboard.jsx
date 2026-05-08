@@ -15,7 +15,7 @@ export default function Dashboard({
       <div className="dashboard-toolbar">
         <div>
           <h2 className="serif">
-            Your week. <em>{schedule.label}.</em>
+            Your week. <em>Optimized.</em>
           </h2>
           <p className="muted mono small">
             {formatTime12(schedule.wake_time)} – {formatTime12(schedule.sleep_time)}
