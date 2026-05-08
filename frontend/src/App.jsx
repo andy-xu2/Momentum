@@ -78,17 +78,7 @@ export default function App() {
 
   function handleLogout() {
     saveAuth(null)
-    saveSession(null)
-    saveInputs({ wakeTime: '07:30', sleepTime: '23:30', fixedEvents: [], flexTasks: [] })
     setUser(null)
-    setScreen('input')
-    setFixedEvents([])
-    setFlexTasks([])
-    setScheduleOptions([])
-    setActiveSchedule(null)
-    setScheduleAnchor(null)
-    setWakeTime('07:30')
-    setSleepTime('23:30')
   }
 
   async function handleBuildWeek() {
