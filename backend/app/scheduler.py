@@ -701,60 +701,37 @@ def reschedule_missed(
             day_states[p.day].load += p.duration
             day_states[p.day].scheduled_sources.add(p.source_id)
 
-    instance = {
-        "id": target.id,
-        "source_id": target.source_id,
-        "name": target.name,
-        "duration": target.duration,
-        "energy": target.energy,
-        "priority": target.priority,
-    }
+    missed_min = hhmm_to_min(target.start)
+    missed_day = target.day
 
-    # Try the rest of this week first, ordered by load. Walking from the
-    # original day forward gives a natural "later in the week" feel.
-    start_idx = DAY_INDEX[target.day]
-    walk_order = DAYS[start_idx:] + DAYS[:start_idx]
-    walk_order.sort(
-        key=lambda d: (
-            DAY_INDEX[d] != start_idx,
-            day_states[d].load,
-            DAY_INDEX[d],
-        )
-    )
+    # Walk same day first (starting right after the missed slot ends), then
+    # subsequent days in calendar order. Pick the earliest slot that fits —
+    # no scoring, no day-jump bonuses.
+    missed_idx = DAY_INDEX[missed_day]
+    walk_order = DAYS[missed_idx:] + DAYS[:missed_idx]
 
-    best_overall: Optional[tuple[float, str, Slot, int]] = None
+    STEP = 30  # 30-minute increments
 
     for day in walk_order:
-        state = day_states[day]
-        for slot in state.slots:
+        # On the missed day only consider time after the task would have ended.
+        min_start = missed_min + target.duration if day == missed_day else wake_min
+
+        for slot in by_day[day]:
             if slot.length < target.duration:
                 continue
-            for start in candidate_starts(slot, target.duration):
-                score = score_candidate(
-                    start, target.duration, slot, state, instance, forbidden_starts
-                )
-                if score is None:
-                    continue
-                # Reward a move that lands on a new day.
-                if day != target.day:
-                    score += 25
-                # Reward later-in-the-week moves slightly so missed tasks
-                # tend to drift forward, matching student intuition.
-                score -= max(0, DAY_INDEX[target.day] - DAY_INDEX[day]) * 5
-                if best_overall is None or score > best_overall[0]:
-                    best_overall = (score, day, slot, start)
+            # Round up to the next 30-min boundary at or after min_start.
+            raw = max(slot.start, min_start)
+            candidate = raw if raw % STEP == 0 else (raw // STEP + 1) * STEP
+            while candidate + target.duration <= slot.end:
+                if (day, candidate) not in forbidden_starts:
+                    target.day = day  # type: ignore[assignment]
+                    target.start = min_to_hhmm(candidate)
+                    target.end = min_to_hhmm(candidate + target.duration)
+                    target.status = "upcoming"
+                    return (
+                        schedule,
+                        f"{target.name} moved to {day} at {to_12hr(target.start)}.",
+                    )
+                candidate += STEP
 
-    if best_overall is None:
-        # Fall back: last-resort placement keeps moving but cannot honor
-        # all constraints. Mark a warning so the UI can flag it.
-        return schedule, f"No open slot found for {target.name} this week."
-
-    _, day, _slot, start_min = best_overall
-    target.day = day  # type: ignore[assignment]
-    target.start = min_to_hhmm(start_min)
-    target.end = min_to_hhmm(start_min + target.duration)
-    target.status = "upcoming"
-    return (
-        schedule,
-        f"{target.name} moved to {day} at {to_12hr(target.start)}.",
-    )
+    return schedule, f"No open slot found for {target.name} this week."
