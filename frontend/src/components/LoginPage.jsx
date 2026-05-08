@@ -39,7 +39,7 @@ export default function LoginPage({ onLogin }) {
       <div className="login-grid">
         <section className="login-hero">
           <h1 className="serif">
-            A calendar that <em>protects</em> your week, not just fills it.
+            A calendar that <em>optimizes</em> your week.
           </h1>
         </section>
 

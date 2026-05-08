@@ -9,12 +9,13 @@ import { api } from './api.js'
 import {
   CATEGORY_COLORS,
   categoryForItem,
-  clearScheduleState,
   loadAuth,
-  loadScheduleState,
+  loadInputs,
+  loadSession,
   loadStreaks,
   saveAuth,
-  saveScheduleState,
+  saveInputs,
+  saveSession,
   saveStreaks,
   streakGoal,
   todayIso,
@@ -29,15 +30,24 @@ const NAV_ITEMS = [
 
 export default function App() {
   const [user, setUser] = useState(() => loadAuth())
-  const _saved = loadScheduleState()
-  const [screen, setScreen] = useState(() => (_saved?.activeSchedule ? 'dashboard' : _saved?.scheduleOptions?.length ? 'selection' : 'input'))
-  const [wakeTime, setWakeTime] = useState(() => _saved?.wakeTime ?? '07:30')
-  const [sleepTime, setSleepTime] = useState(() => _saved?.sleepTime ?? '23:30')
-  const [fixedEvents, setFixedEvents] = useState(() => _saved?.fixedEvents ?? [])
-  const [flexTasks, setFlexTasks] = useState(() => _saved?.flexTasks ?? [])
-  const [scheduleOptions, setScheduleOptions] = useState(() => _saved?.scheduleOptions ?? [])
-  const [activeSchedule, setActiveSchedule] = useState(() => _saved?.activeSchedule ?? null)
-  const [scheduleAnchor, setScheduleAnchor] = useState(() => _saved?.scheduleAnchor ?? null)
+  const initialInputs = useMemo(() => loadInputs(), [])
+  const initialSession = useMemo(() => loadSession(), [])
+  const [screen, setScreen] = useState(() =>
+    initialSession?.activeSchedule ? 'dashboard' : 'input',
+  )
+  const [wakeTime, setWakeTime] = useState(initialInputs.wakeTime)
+  const [sleepTime, setSleepTime] = useState(initialInputs.sleepTime)
+  const [fixedEvents, setFixedEvents] = useState(initialInputs.fixedEvents)
+  const [flexTasks, setFlexTasks] = useState(initialInputs.flexTasks)
+  const [scheduleOptions, setScheduleOptions] = useState(
+    initialSession?.scheduleOptions ?? [],
+  )
+  const [activeSchedule, setActiveSchedule] = useState(
+    initialSession?.activeSchedule ?? null,
+  )
+  const [scheduleAnchor, setScheduleAnchor] = useState(
+    initialSession?.scheduleAnchor ?? null,
+  )
   const [toast, setToast] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -48,8 +58,12 @@ export default function App() {
   }, [streaks])
 
   useEffect(() => {
-    saveScheduleState({ wakeTime, sleepTime, fixedEvents, flexTasks, scheduleOptions, activeSchedule, scheduleAnchor })
-  }, [wakeTime, sleepTime, fixedEvents, flexTasks, scheduleOptions, activeSchedule, scheduleAnchor])
+    saveInputs({ wakeTime, sleepTime, fixedEvents, flexTasks })
+  }, [wakeTime, sleepTime, fixedEvents, flexTasks])
+
+  useEffect(() => {
+    saveSession({ scheduleOptions, activeSchedule, scheduleAnchor })
+  }, [scheduleOptions, activeSchedule, scheduleAnchor])
 
   function showToast(message) {
     setToast({ id: crypto.randomUUID(), message })
@@ -64,7 +78,8 @@ export default function App() {
 
   function handleLogout() {
     saveAuth(null)
-    clearScheduleState()
+    saveSession(null)
+    saveInputs({ wakeTime: '07:30', sleepTime: '23:30', fixedEvents: [], flexTasks: [] })
     setUser(null)
     setScreen('input')
     setFixedEvents([])

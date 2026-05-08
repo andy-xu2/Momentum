@@ -45,7 +45,7 @@ export default function InputPage({
               value={wakeTime}
               onChange={(e) => onWakeTimeChange(e.target.value)}
             />
-            <span className="time-field-display mono">{formatTime12(wakeTime)}</span>
+            {/* <span className="time-field-display mono">{formatTime12(wakeTime)}</span> */}
           </label>
           <label className="time-field">
             <span className="time-field-label">
@@ -55,8 +55,8 @@ export default function InputPage({
               type="time"
               value={sleepTime}
               onChange={(e) => onSleepTimeChange(e.target.value)}
-            />
-            <span className="time-field-display mono">{formatTime12(sleepTime)}</span>
+              />
+              {/* <span className="time-field-display mono">{formatTime12(sleepTime)}</span> */}
           </label>
         </div>
       </section>
@@ -73,7 +73,7 @@ export default function InputPage({
           <div className="cards-grid">
             {fixedEvents.length === 0 && (
               <p className="empty">
-                Classes, work shifts, and club meetings live here.
+                {/* Classes, work shifts, and club meetings live here. */}
               </p>
             )}
             {fixedEvents.map((event) => (
@@ -108,7 +108,7 @@ export default function InputPage({
           <div className="cards-grid">
             {flexTasks.length === 0 && (
               <p className="empty">
-                Studying, gym, errands. Anything that can move.
+                {/* Studying, gym, errands. Anything that can move. */}
               </p>
             )}
             {flexTasks.map((task) => (

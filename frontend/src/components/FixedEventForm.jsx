@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { DAYS, formatTime12 } from '../constants.js'
+import { DAYS } from '../constants.js'
 
 const initialDraft = {
   name: '',
@@ -60,7 +60,6 @@ export default function FixedEventForm({ onAdd }) {
             value={draft.start}
             onChange={(e) => setDraft({ ...draft, start: e.target.value })}
           />
-          <span className="time-field-display">{formatTime12(draft.start)}</span>
         </label>
         <label>
           <span className="form-label">Ends</span>
@@ -69,7 +68,6 @@ export default function FixedEventForm({ onAdd }) {
             value={draft.end}
             onChange={(e) => setDraft({ ...draft, end: e.target.value })}
           />
-          <span className="time-field-display">{formatTime12(draft.end)}</span>
         </label>
       </div>
       {errorMsg && <p className="form-error">{errorMsg}</p>}

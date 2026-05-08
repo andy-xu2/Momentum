@@ -207,11 +207,38 @@ export function saveAuth(user) {
   }
 }
 
-const SCHEDULE_KEY = 'momentum.schedule'
+const INPUTS_KEY = 'momentum.inputs'
+const SESSION_KEY = 'momentum.session'
 
-export function loadScheduleState() {
+const DEFAULT_INPUTS = {
+  wakeTime: '07:30',
+  sleepTime: '23:30',
+  fixedEvents: [],
+  flexTasks: [],
+}
+
+export function loadInputs() {
   try {
-    const raw = localStorage.getItem(SCHEDULE_KEY)
+    const raw = localStorage.getItem(INPUTS_KEY)
+    if (!raw) return { ...DEFAULT_INPUTS }
+    const parsed = JSON.parse(raw)
+    return { ...DEFAULT_INPUTS, ...parsed }
+  } catch {
+    return { ...DEFAULT_INPUTS }
+  }
+}
+
+export function saveInputs(inputs) {
+  try {
+    localStorage.setItem(INPUTS_KEY, JSON.stringify(inputs))
+  } catch {
+    // ignore quota errors
+  }
+}
+
+export function loadSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY)
     if (!raw) return null
     return JSON.parse(raw)
   } catch {
@@ -219,17 +246,10 @@ export function loadScheduleState() {
   }
 }
 
-export function saveScheduleState(state) {
+export function saveSession(session) {
   try {
-    localStorage.setItem(SCHEDULE_KEY, JSON.stringify(state))
-  } catch {
-    // ignore quota errors
-  }
-}
-
-export function clearScheduleState() {
-  try {
-    localStorage.removeItem(SCHEDULE_KEY)
+    if (session) localStorage.setItem(SESSION_KEY, JSON.stringify(session))
+    else localStorage.removeItem(SESSION_KEY)
   } catch {
     // ignore
   }
