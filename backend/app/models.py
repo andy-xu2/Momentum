@@ -93,3 +93,19 @@ class RescheduleRequest(BaseModel):
 class RescheduleResponse(BaseModel):
     schedule: Schedule
     message: str
+
+
+class RegisterRequest(BaseModel):
+    email: str
+    password: str
+    name: str
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class AuthResponse(BaseModel):
+    email: str
+    name: str

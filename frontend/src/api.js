@@ -13,6 +13,10 @@ async function request(path, options = {}) {
 }
 
 export const api = {
+  login: (payload) =>
+    request('/auth/login', { method: 'POST', body: JSON.stringify(payload) }),
+  register: (payload) =>
+    request('/auth/register', { method: 'POST', body: JSON.stringify(payload) }),
   generateSchedules: (payload) =>
     request('/schedules/generate', {
       method: 'POST',

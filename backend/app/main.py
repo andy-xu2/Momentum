@@ -1,16 +1,20 @@
 from __future__ import annotations
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
+from .auth import login_user, register_user  # noqa: E402
 from .db import mongo  # noqa: E402
 from .demo_data import get_demo_data  # noqa: E402
 from .models import (  # noqa: E402
+    AuthResponse,
     GenerateRequest,
     GenerateResponse,
+    LoginRequest,
+    RegisterRequest,
     RescheduleRequest,
     RescheduleResponse,
 )
@@ -24,6 +28,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.post("/auth/register", response_model=AuthResponse)
+def register(payload: RegisterRequest) -> AuthResponse:
+    try:
+        user = register_user(payload.email, payload.password, payload.name)
+        return AuthResponse(**user)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/auth/login", response_model=AuthResponse)
+def login(payload: LoginRequest) -> AuthResponse:
+    try:
+        user = login_user(payload.email, payload.password)
+        return AuthResponse(**user)
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
 
 
 @app.get("/health")
